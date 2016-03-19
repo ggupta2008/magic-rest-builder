@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 # generate eclipse project
 
 #check if we got service name from the user
