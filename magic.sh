@@ -13,15 +13,18 @@ SERVICE_NAME="$1"
 echo $SERVICE_NAME
 
 first_char=${SERVICE_NAME:0:1}
+echo $first_char
 
 LOWER_CASE_SERVICE_NAME=$(echo "$SERVICE_NAME" | awk '{print tolower($0)}')
 echo $LOWER_CASE_SERVICE_NAME
+echo $first_char
 
-if [[ ${first_char} == [a-z] ]]; then
+#if [[ ${first_char} == [a-z] ]] 
+#then
   #statements
-  echo "Service Name specified should start with uppercase"
-  exit 0
-fi
+ # echo "Service Name specified should start with uppercase"
+#  exit 0
+#fi
 
 # generate the parent pom
 mvn archetype:generate -B -DarchetypeGroupId=org.codehaus.mojo.archetypes -DarchetypeArtifactId=pom-root -DarchetypeVersion=RELEASE -DgroupId=com.verizon.iot.thingspace -DartifactId="$SERVICE_NAME-parent" -Dversion=1.0.0-SNAPSHOT
@@ -150,17 +153,25 @@ mv pom2.xml pom.xml
 cd ..
 
 #copy the template Rest files
-cp Rest.java ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest.java
-sed 's/{Service}/'"${SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest.java > ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest2.java
-mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest2.java ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest.java
+cp Rest.java ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest.java
+sed 's/{Service}/'"${SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest.java > ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest2.java
+mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest2.java ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest.java
 
 # change the import definitions
-sed 's/thingspace.'"${SERVICE_NAME}"'/'"thingspace.${LOWER_CASE_SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest.java > ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest2.java
-mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest2.java ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${SERVICE_NAME}service/${SERVICE_NAME}Rest.java
+sed 's/thingspace.'"${SERVICE_NAME}"'/'"thingspace.${LOWER_CASE_SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest.java > ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest2.java
+mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest2.java ${SERVICE_NAME}-parent/${SERVICE_NAME}-rest/src/main/java/com/verizon/iot/thingspace/${LOWER_CASE_SERVICE_NAME}service/${SERVICE_NAME}Rest.java
 
 
 cp -rf web.xml ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web.xml
 sed 's/{Service}/'"${LOWER_CASE_SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web.xml > ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web2.xml
 mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web2.xml ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web.xml
 
-cp -rf web.xml ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/index.jsp
+sed 's/{Service_upper}/'"${SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web.xml > ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web2.xml
+mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web2.xml ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/WEB-INF/web.xml
+
+#cp -rf web.xml ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/index.jsp
+
+cp -R dist ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/
+
+sed 's/{Service}/'"${SERVICE_NAME}"'/g' ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/dist/index.html > ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/dist/index2.html
+mv ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/dist/index2.html ${SERVICE_NAME}-parent/${SERVICE_NAME}-service/src/main/webapp/dist/index.html
